@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Entre Nós — Um livro para Gaby</title>
+<style>
+:root{
+  --night:#090b0f;--night2:#11141a;--paper:#f3eee6;--paper2:#e9e0d4;
+  --ink:#1d1c20;--muted:#77717a;--line:rgba(255,255,255,.09);
+  --soft:#d8d9de;--accent:#f7f7f7;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:
+radial-gradient(circle at 18% 7%,#262830 0,transparent 28%),
+radial-gradient(circle at 86% 88%,#171920 0,transparent 30%),var(--night);
+font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff}
+body{overflow-x:hidden}
+button{font:inherit}
+.app{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:18px 12px 28px}
+.topbar{width:min(1020px,100%);display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px;color:#aaaeb6;font-size:12px}
+.brand{letter-spacing:.18em;text-transform:uppercase}.counter{font-variant-numeric:tabular-nums}
+.book-shell{width:min(1020px,100%);perspective:2200px;position:relative}
+.book{height:min(720px,76vh);min-height:620px;position:relative;filter:drop-shadow(0 38px 70px rgba(0,0,0,.45))}
+.page{
+ position:absolute;inset:0;background:
+ linear-gradient(90deg,#e9e1d5 0,#f5f0e8 7%,#f4efe7 93%,#e4dbcf 100%);
+ color:var(--ink);border-radius:14px;overflow:auto;transform-origin:left center;
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 32px 75px rgba(0,0,0,.38);
+ transition:transform .88s cubic-bezier(.19,.72,.1,1),opacity .55s ease,visibility .55s;
+ backface-visibility:hidden;transform-style:preserve-3d;visibility:hidden;opacity:0;pointer-events:none;
+}
+.page::before{content:"";position:absolute;top:0;bottom:0;left:0;width:54px;background:linear-gradient(90deg,rgba(0,0,0,.16),transparent);opacity:.22;pointer-events:none}
+.page.active{visibility:visible;opacity:1;pointer-events:auto;z-index:5}
+.page.turning{transform:rotateY(-168deg);opacity:.22;z-index:12}
+.page.returning{transform:rotateY(-22deg)}
+.inner{min-height:100%;padding:clamp(34px,7vw,76px);display:flex;flex-direction:column;justify-content:center;position:relative}
+.cover{background:linear-gradient(135deg,#101216,#20232a);color:#fff}
+.cover::before{display:none}
+.cover p{color:#c9cbd1}
+.cover .inner{justify-content:flex-end}
+.spine{position:absolute;left:0;top:0;bottom:0;width:16px;background:linear-gradient(#0b0c0f,#191b21,#0b0c0f);box-shadow:3px 0 10px rgba(0,0,0,.4)}
+.chapter{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#817b83;margin-bottom:15px}
+.cover .chapter{color:#b7bac1}
+h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height:1.02;margin:0 0 22px}
+h1{font-size:clamp(46px,9vw,86px);max-width:820px}
+h2{font-size:clamp(34px,6.5vw,62px)}
+p{font-family:Georgia,"Times New Roman",serif;font-size:clamp(18px,2.5vw,25px);line-height:1.62;margin:0;color:#39363c}
+p+p{margin-top:20px}
+.page-no{position:absolute;right:30px;bottom:22px;color:#9b959b;font-size:11px}
+.rule{width:54px;height:2px;background:currentColor;opacity:.65;margin:8px 0 30px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.card{border:1px solid rgba(0,0,0,.11);padding:18px;border-radius:18px;background:rgba(255,255,255,.42)}
+.card b{display:block;font:600 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#6f6971;margin-bottom:8px}
+.card span{font:18px/1.5 Georgia,serif;color:#3a373d}
+.quote{padding-left:20px;border-left:2px solid #9a9399;font-style:italic}
+.chat{margin-top:22px;display:grid;gap:10px}
+.bubble{max-width:82%;padding:13px 15px;border-radius:18px;font:17px/1.46 Inter,sans-serif}
+.me{justify-self:end;background:#20242b;color:#fff;border-bottom-right-radius:6px}
+.her{justify-self:start;background:#ded8d0;color:#28262a;border-bottom-left-radius:6px}
+.small{font-size:15px!important;line-height:1.55!important;color:#6e6870!important}
+.print-wrap{margin-top:20px;border:1px solid rgba(0,0,0,.11);border-radius:22px;padding:10px;background:rgba(255,255,255,.35)}
+.print-wrap img{display:block;width:100%;border-radius:15px}
+.timeline{display:grid;gap:10px;margin-top:22px}
+.trow{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:15px;border:1px solid rgba(0,0,0,.11);border-radius:16px;background:rgba(255,255,255,.35)}
+.dot{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#202126;color:white;font-size:12px}
+.trow b{display:block;font-size:14px;margin:2px 0 5px}.trow span{font-size:14px;line-height:1.45;color:#6f6971}
+.controls{width:min(1020px,100%);display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.nav{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;padding:12px 17px;border-radius:999px;cursor:pointer;backdrop-filter:blur(8px)}
+.nav:disabled{opacity:.25;cursor:not-allowed}
+.progress{width:min(1020px,100%);height:2px;background:rgba(255,255,255,.08);margin-top:12px;overflow:hidden}.progress i{display:block;height:100%;background:#dedfe3;width:0;transition:width .4s}
+.gamebox{margin-top:18px;border:1px solid rgba(0,0,0,.12);border-radius:20px;padding:18px;background:rgba(255,255,255,.38)}
+.game-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.game-head b{font-size:13px}.score{font-size:12px;color:#77717a}
+.prompt{margin-top:14px;font-family:Georgia,serif;font-size:19px;line-height:1.45}
+.wordbank,.sentence{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;min-height:48px}
+.word{border:1px solid rgba(0,0,0,.14);background:#fff;color:#242329;padding:9px 12px;border-radius:999px;cursor:pointer;font-size:13px}
+.word.used{opacity:.28;pointer-events:none}
+.slotword{background:#202126;color:#fff;padding:9px 12px;border-radius:999px;font-size:13px;cursor:pointer}
+.game-actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.gbtn{border:0;background:#202126;color:#fff;padding:10px 14px;border-radius:999px;cursor:pointer}.gbtn.alt{background:transparent;color:#302e33;border:1px solid rgba(0,0,0,.16)}
+.feedback{margin-top:14px;padding:15px;border-radius:15px;background:rgba(0,0,0,.055);font-family:Georgia,serif;font-size:17px;line-height:1.5;min-height:64px}
+.secret{margin-top:20px}.secret-btn{border:1px solid rgba(0,0,0,.18);background:transparent;padding:11px 15px;border-radius:999px;cursor:pointer}.secret-panel{display:none;margin-top:16px;padding:18px;border:1px dashed #aaa3a8;border-radius:18px}.secret-panel.show{display:block;animation:fade .6s}
+.secret-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.secret-word{opacity:0;transform:translateY(8px);background:#232429;color:white;padding:7px 10px;border-radius:999px;font-size:12px}.secret-word.show{animation:word .45s forwards}
+@keyframes word{to{opacity:1;transform:none}}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+ .app{padding:10px 9px 20px}.book{height:79vh;min-height:650px}.inner{padding:40px 27px 48px}
+ .cards{grid-template-columns:1fr}.bubble{max-width:90%}p{font-size:19px}h1{font-size:46px}h2{font-size:35px}
+ .print-wrap{max-height:410px;overflow:auto}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="topbar"><div class="brand">rafihx × gaby</div><div class="counter" id="counter">01 / 14</div></div>
+
+<div class="book-shell">
+<div class="book" id="book">
+
+<section class="page cover active">
+<div class="spine"></div>
+<div class="inner">
+<div class="chapter">um livro sobre o que ainda existe entre nós</div>
+<h1>Entre nós,<br>mesmo quando tudo fica difícil.</h1>
+<div class="rule"></div>
+<p>Para Gaby. Não é uma tentativa de decidir o que você sente. É uma tentativa de finalmente colocar em ordem o que eu sinto, o que eu vejo em você e o que eu quero aprender a fazer diferente.</p>
+<div class="page-no">01</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo i — a manhã</div>
+<h2>Ir embora de manhã nunca parece simples.</h2>
+<p>Tem sua voz de sono, aquele jeito ainda cansado, e a sensação de que qualquer minuto a mais perto de você vale muito. Às vezes eu já estou indo e quero voltar só para continuar ali.</p>
+<p>Não é porque eu queira te prender. É porque a despedida pesa justamente porque sua presença faz falta rápido demais.</p>
+<div class="page-no">02</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo ii — o dia muda você</div>
+<h2>Depois do almoço, alguma coisa quase sempre muda.</h2>
+<p>Você trabalha de segunda a sábado. O dia vai consumindo sua energia. Depois do almoço seu humor muda, seu jeito muda, a paciência vai ficando menor e o cansaço começa a aparecer mais.</p>
+<div class="cards">
+<div class="card"><b>antes</b><span>Mais leve, mais aberta, mais presente.</span></div>
+<div class="card"><b>depois</b><span>Mais cansada, mais fechada, às vezes mais seca e distante.</span></div>
+</div>
+<p style="margin-top:22px">E eu preciso lembrar que isso não significa automaticamente que o amor desapareceu. Às vezes significa apenas que você chegou no limite do dia.</p>
+<div class="page-no">03</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo iii — meu horário de ir</div>
+<h2>Quando chega a hora da escola, eu sinto que estou te deixando justamente quando você mais cansou.</h2>
+<p>É nessa hora que você muitas vezes já está mudada, exausta e com menos vontade de conversar. E eu às vezes não quero ir. Eu quero ficar com você.</p>
+<p class="quote">Só que amor também precisa aprender a existir mesmo quando os horários não combinam.</p>
+<div class="page-no">04</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo iv — perder sua voz</div>
+<h2>Uma das coisas que mais doem é perder o espaço da sua voz.</h2>
+<p>Perder aquela conversa em que você fala tudo. Perder seu jeito de contar as coisas. Perder a sua fala espontânea porque agora tudo parece precisar ser medido.</p>
+<p>Quando você vai ficando mais curta, mais seca ou fala menos, eu sinto como se uma parte muito importante de nós fosse ficando distante. E isso me deixa chateado porque eu amo ouvir você existindo comigo, até quando o assunto é bobo.</p>
+<div class="page-no">05</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo v — quando tudo parecia certo</div>
+<h2>Às vezes parece que finalmente deu tudo certo… e a gente faz alguma besteira.</h2>
+<p>Tem dias em que tudo fica leve. A conversa volta. O carinho aparece. Eu penso: “agora vai”. E então acontece alguma coisa, algum desentendimento, alguma resposta errada, algum exagero, e o clima muda de novo.</p>
+<p>O pior é quando isso parece se repetir no final de semana. Como se a gente construísse durante a semana e desmontasse quando finalmente deveria descansar.</p>
+<div class="page-no">06</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo vi — o ciclo</div>
+<h2>Eu não quero que todo final de semana vire a mesma história.</h2>
+<div class="timeline">
+<div class="trow"><div class="dot">1</div><div><b>Começa bem</b><span>A gente conversa, ri e parece mais próximo.</span></div></div>
+<div class="trow"><div class="dot">2</div><div><b>Algo pesa</b><span>Uma fala, um tom, um cansaço ou uma expectativa errada.</span></div></div>
+<div class="trow"><div class="dot">3</div><div><b>Fica frio</b><span>As respostas encurtam e cada um começa a imaginar o que o outro está pensando.</span></div></div>
+<div class="trow"><div class="dot">4</div><div><b>Vem o medo</b><span>Eu penso que posso te perder e tento consertar rápido demais.</span></div></div>
+</div>
+<p style="margin-top:18px">Eu quero mudar o ciclo, não obrigar você a mudar de sentimento.</p>
+<div class="page-no">07</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo vii — aquela conversa</div>
+<h2>“Quando a gente tá longe eu sinto muito sua falta.”</h2>
+<p>Foi bonito ler isso. E foi assustador ler o que veio logo depois: que ao mesmo tempo você pensa em terminar porque estar distante de alguém não faz sentido para você e porque a pessoa pode perder o sentimento aos poucos.</p>
+<div class="print-wrap"><img src="assets/conversa_gaby.jpg" alt="Conversa com Gaby"></div>
+<p class="small" style="margin-top:14px">Esse print está aqui como memória de uma conversa importante, não como cobrança.</p>
+<div class="page-no">08</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo viii — o medo que ficou</div>
+<h2>Depois daquele dia, uma resposta seca às vezes parece maior do que ela realmente é.</h2>
+<p>Minha cabeça volta para aquela conversa. Eu penso se é só cansaço, se eu fiz alguma coisa ou se você está se afastando de verdade. E isso me desgasta.</p>
+<p>Eu sei que provavelmente vou sentir esse medo outras vezes. Mas não quero usar esse medo para te pressionar. Quero aprender a perguntar com calma e ouvir de verdade.</p>
+<div class="page-no">09</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo ix — sua história também pesa</div>
+<h2>Eu sei que você não começou a sentir tudo isso comigo.</h2>
+<p>Você já veio carregando ansiedade, dores, cansaços e coisas do passado que talvez nunca tenham encontrado uma recepção realmente acolhedora.</p>
+<p>Por isso eu não quero confundir sua mente nem fazer você sentir exatamente o que eu penso. Quero que você descubra o que sente do seu jeito, no seu tempo. E, se ainda houver espaço para mim, eu quero ser alguém seguro enquanto você faz isso.</p>
+<div class="page-no">10</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">capítulo x — como eu gostaria de conversar</div>
+<h2>Menos medo. Mais escuta.</h2>
+<div class="chat">
+<div class="bubble me">Amor, eu senti você diferente hoje. Não quero te cobrar. Foi cansaço, aconteceu alguma coisa ou você só precisa ficar mais quieta?</div>
+<div class="bubble her">Eu nem sei. Só tô cansada.</div>
+<div class="bubble me">Então não precisa descobrir agora. Descansa. Eu continuo aqui. Quando você quiser falar, eu quero ouvir de verdade.</div>
+<div class="bubble her">E se eu estiver confusa sobre nós?</div>
+<div class="bubble me">Eu vou ter medo, mas prefiro saber a verdade. Eu quero conversar, entender e ver se ainda existe algo que nós dois queremos cuidar.</div>
+</div>
+<div class="page-no">11</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">jogo da mudança — monte a frase</div>
+<h2>Algumas mudanças começam com uma frase simples.</h2>
+<p class="small">Toque nas palavras para montar a frase. Se errar, é só limpar e tentar novamente.</p>
+
+<div class="gamebox">
+<div class="game-head"><b id="levelTitle">Frase 1 de 4</b><span class="score" id="gameScore">0 concluídas</span></div>
+<div class="prompt" id="prompt">Monte uma frase sobre escutar antes de reagir.</div>
+<div class="sentence" id="sentence"></div>
+<div class="wordbank" id="wordbank"></div>
+<div class="game-actions">
+<button class="gbtn" id="checkBtn">verificar frase</button>
+<button class="gbtn alt" id="clearBtn">limpar</button>
+</div>
+<div class="feedback" id="feedback">Monte a primeira frase.</div>
+</div>
+<div class="page-no">12</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">depois do jogo</div>
+<h2>Mudar não é prometer perfeição.</h2>
+<p>É aprender a reconhecer o padrão antes que ele vire mais um final de semana pesado. É perceber seu cansaço antes de interpretar como falta de amor. É ouvir antes de responder. É pedir carinho sem transformar isso em cobrança.</p>
+<div class="cards">
+<div class="card"><b>eu quero aprender</b><span>A escutar sua voz mesmo quando ela diz algo difícil.</span></div>
+<div class="card"><b>eu quero parar</b><span>De transformar qualquer distância em despedida.</span></div>
+<div class="card"><b>eu quero cuidar</b><span>Do nosso espaço para conversar sem medo.</span></div>
+<div class="card"><b>eu quero respeitar</b><span>O tempo que você precisa para entender o que sente.</span></div>
+</div>
+<div class="page-no">13</div>
+</div></section>
+
+<section class="page"><div class="inner">
+<div class="chapter">última página — uma coisa escondida</div>
+<h2>Se você chegou até aqui, ainda existe uma última parte.</h2>
+<p>Não é uma cobrança. É a forma mais calma que eu encontrei de dizer o quanto tudo isso mexe comigo.</p>
+<div class="secret">
+<button class="secret-btn" id="secretBtn">revelar mensagem</button>
+<div class="secret-panel" id="secretPanel">
+<p class="small">As palavras aparecem aos poucos.</p>
+<div class="secret-words" id="secretWords"></div>
+<p id="finalText" style="display:none;margin-top:20px">
+Gaby, eu sinto muito por cada vez em que o meu medo virou pressa. Por cada vez em que, quando tudo parecia estar dando certo, eu acabei fazendo alguma coisa que deixou nosso clima pesado de novo. Eu sinto muito por cada final de semana em que parecia que a gente voltava para o mesmo lugar.
+</p>
+<p id="finalText2" style="display:none">
+Eu sinto falta da sua voz quando você se fecha. Sinto falta da forma como você fala comigo quando se sente segura. Quando esse espaço some, eu fico triste porque não quero que nosso relacionamento vire um lugar onde você precisa escolher cada palavra com medo.
+</p>
+<p id="finalText3" style="display:none">
+Eu amo você. Eu quero nós. Eu ainda vou sentir medo quando você se afastar, mas quero aprender a sentir esse medo sem te prender dentro dele. Se ainda existir alguma parte sua que sente saudade, carinho e vontade de tentar, eu só peço que a gente converse antes de transformar um dia ruim em uma decisão definitiva.
+</p>
+<p id="finalText4" class="quote" style="display:none;margin-top:20px">
+Eu não quero vencer uma discussão para não te perder. Quero construir um lugar onde você consiga falar, respirar, mudar de humor, descansar e ainda saber que pode voltar para a conversa quando estiver pronta.
+</p>
+</div>
+</div>
+<div class="page-no">14</div>
+</div></section>
+
+</div>
+</div>
+
+<div class="controls">
+<button class="nav" id="prev">← página anterior</button>
+<button class="nav" id="next">próxima página →</button>
+</div>
+<div class="progress"><i id="bar"></i></div>
+</div>
+
+<script>
+const pages=[...document.querySelectorAll('.page')];
+const counter=document.getElementById('counter'),prev=document.getElementById('prev'),next=document.getElementById('next'),bar=document.getElementById('bar');
+let pageIndex=0,busy=false;
+
+function sync(){
+ pages.forEach((p,i)=>p.classList.toggle('active',i===pageIndex));
+ counter.textContent=String(pageIndex+1).padStart(2,'0')+' / '+String(pages.length).padStart(2,'0');
+ prev.disabled=pageIndex===0; next.disabled=pageIndex===pages.length-1;
+ bar.style.width=((pageIndex+1)/pages.length*100)+'%';
+ localStorage.setItem('gabyBookPage',pageIndex);
+}
+function go(d){
+ if(busy)return;
+ const ni=pageIndex+d;if(ni<0||ni>=pages.length)return;
+ busy=true;
+ const current=pages[pageIndex];
+ if(d>0){
+   current.classList.add('turning');
+   setTimeout(()=>{current.classList.remove('active','turning');pageIndex=ni;sync();busy=false},640);
+ } else {
+   current.classList.remove('active');pageIndex=ni;sync();
+   const incoming=pages[pageIndex];incoming.classList.add('returning');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>incoming.classList.remove('returning')));
+   setTimeout(()=>busy=false,650);
+ }
+}
+prev.onclick=()=>go(-1);next.onclick=()=>go(1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)});
+let sx=0;document.addEventListener('touchstart',e=>sx=e.changedTouches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>55)go(dx<0?1:-1)},{passive:true});
+
+const levels=[
+ {prompt:"Monte uma frase sobre escutar antes de reagir.",answer:["eu","quero","aprender","a","escutar"],words:["escutar","a","quero","eu","aprender"],msg:"Escutar não significa concordar com tudo. Significa dar espaço para a voz dela existir inteira antes do medo responder por você."},
+ {prompt:"Monte uma frase sobre o cansaço dela.",answer:["seu","cansaço","não","é","falta","de","amor"],words:["amor","não","cansaço","seu","de","é","falta"],msg:"Nem toda mudança de humor é distância emocional. Às vezes ela só trabalhou demais e chegou no limite."},
+ {prompt:"Monte uma frase sobre medo e pressão.",answer:["eu","posso","amar","sem","pressionar"],words:["pressionar","amar","eu","sem","posso"],msg:"Você pode dizer que quer que ela fique sem transformar seu medo em obrigação para ela."},
+ {prompt:"Monte uma frase sobre vocês dois.",answer:["nós","podemos","mudar","o","ciclo"],words:["o","mudar","nós","ciclo","podemos"],msg:"O objetivo não é nunca mais errar. É perceber o padrão cedo o bastante para não repetir sempre a mesma história."}
+];
+let level=0,assembled=[],completed=0;
+const wordbank=document.getElementById('wordbank'),sentence=document.getElementById('sentence'),promptEl=document.getElementById('prompt'),feedback=document.getElementById('feedback'),levelTitle=document.getElementById('levelTitle'),gameScore=document.getElementById('gameScore');
+
+function renderGame(){
+ const L=levels[level];promptEl.textContent=L.prompt;levelTitle.textContent=`Frase ${level+1} de ${levels.length}`;
+ sentence.innerHTML='';wordbank.innerHTML='';
+ assembled.forEach((w,i)=>{const s=document.createElement('button');s.className='slotword';s.textContent=w;s.onclick=()=>{assembled.splice(i,1);renderGame()};sentence.appendChild(s)});
+ L.words.forEach((w,i)=>{const b=document.createElement('button');b.className='word';b.textContent=w;
+   const usedCount=assembled.filter(x=>x===w).length; const availableCount=L.words.slice(0,i+1).filter(x=>x===w).length;
+   if(usedCount>=availableCount)b.classList.add('used');
+   b.onclick=()=>{assembled.push(w);renderGame()};wordbank.appendChild(b)
+ });
+ gameScore.textContent=`${completed} concluída${completed===1?'':'s'}`;
+}
+document.getElementById('clearBtn').onclick=()=>{assembled=[];feedback.textContent='Frase limpa. Tente de novo.';renderGame()};
+document.getElementById('checkBtn').onclick=()=>{
+ const L=levels[level];
+ if(JSON.stringify(assembled)===JSON.stringify(L.answer)){
+   feedback.textContent=L.msg;
+   if(level<levels.length-1){completed=Math.max(completed,level+1);setTimeout(()=>{level++;assembled=[];renderGame();feedback.textContent='Boa. Agora monte a próxima frase.'},1600)}
+   else{completed=levels.length;gameScore.textContent=`${completed} concluídas`;feedback.textContent=L.msg+" Você concluiu o Jogo da Mudança."}
+ } else feedback.textContent='Ainda não ficou certo. Tente trocar a ordem das palavras.';
+};
+
+const secretPhrase=("me desculpa por todas as vezes em que quando tudo parecia finalmente estar bem eu deixei o medo falar mais alto eu sinto falta da sua voz sinto falta de ouvir você sem receio e quero aprender a fazer diferente sem confundir sua mente").split(" ");
+let revealed=false;
+document.getElementById('secretBtn').onclick=()=>{
+ document.getElementById('secretPanel').classList.add('show');if(revealed)return;revealed=true;
+ const box=document.getElementById('secretWords');
+ secretPhrase.forEach((w,i)=>{const s=document.createElement('span');s.className='secret-word';s.textContent=w;box.appendChild(s);setTimeout(()=>s.classList.add('show'),i*58)});
+ const delay=secretPhrase.length*58+350;
+ ['finalText','finalText2','finalText3','finalText4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);el.style.display='block';el.style.animation='fade .7s'},delay+i*950));
+};
+
+const saved=Number(localStorage.getItem('gabyBookPage'));
+if(Number.isInteger(saved) && saved>=0 && saved<pages.length) pageIndex=saved;
+sync();renderGame();
+</script>
+</body>
+</html>
